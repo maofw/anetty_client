@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="anetty_client" default="build" basedir="." >
+    <property name="src" value="src"/>
+    <property name="gen" value="gen"/>
+	<property name="lib" value="libs" />
+	<property name="third_lib" value="D:\android_adt\sdk\platforms\android-8\android.jar" />	
+	<property name="dest" value="bin" />
+	<property name="jar" value="jar" />
+	<property name="jar_name" value="anetty_client_1.0.jar" />
+	<property name="push_lib_dir" value="E:\android_workspace\monitor_push_test\libs" />
+	<path id="third_jar" >
+		<fileset dir="${lib}" >	
+			<include name="*.jar"/>			
+		</fileset>		
+	</path>	
+	<target name="compile" depends="clean,init,precompile">
+	    <javac srcdir="${src}" destdir="${dest}" encoding="UTF-8">
+	    	<classpath refid="third_jar"/>	 
+	    	<classpath id="tcls">
+	    	       <pathelement path="${third_lib}" />
+	    	 </classpath>
+	    </javac>
+	</target>
+	<target name="precompile" >
+	    <javac srcdir="${gen}" destdir="${dest}" encoding="UTF-8">
+	    	<classpath refid="third_jar"/>	 
+	    	<classpath id="tcls">
+	    	       <pathelement path="${third_lib}" />
+	    	 </classpath>
+	    </javac>
+	</target>
+	<target name="build" depends="compile">
+	    <jar jarfile="${jar}/${jar_name}" basedir="${dest}"  />
+		<copy todir="${push_lib_dir}" file="${jar}/${jar_name}" /> 
+		<copy todir="${push_lib_dir}">
+           <fileset dir="${lib}/">
+              <include name="*.jar" />
+          </fileset>
+       </copy>
+	</target>
+	<target name="clean" >
+		 <delete dir="${dest}" />
+		 <delete file="${jar}/${jar_name}" />
+	</target>
+	<target name="init" >
+	    <mkdir dir="${dest}" />
+	</target>
+</project> 
