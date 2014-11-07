@@ -51,7 +51,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 				// 停止心跳消息发送
 				NettyAlarmManager.stopHeart();
 				// 停止重连
-				NettyAlarmManager.stopReconnection();
+				NettyAlarmManager.stopReconnection();				
 			} else {
 				// 启动重连
 				NettyAlarmManager.startReconnection(context);

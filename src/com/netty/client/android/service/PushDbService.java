@@ -8,6 +8,7 @@ import android.content.Context;
 
 import com.netty.client.android.dao.Device;
 import com.netty.client.android.dao.DeviceDao;
+import com.netty.client.context.ApplicationContextClient;
 
 import de.greenrobot.dao.query.QueryBuilder;
 
@@ -36,7 +37,11 @@ public class PushDbService {
 		if (list != null && list.size() > 0) {
 			Map<String, Device> map = new HashMap<String, Device>();
 			for (Device device : list) {
-				map.put(device.getAppPackage(), device);
+				if (device != null) {
+					// 设备从数据库中取出来默认为已经离线
+					device.setIsOnline(ApplicationContextClient.DEVICE_OFFLINE);
+					map.put(device.getAppPackage(), device);
+				}
 			}
 			return map;
 		}
@@ -66,11 +71,11 @@ public class PushDbService {
 			this.deviceDao.delete(device);
 		}
 	}
-	
-	public void saveOrUpdateDevices(List<Device> devices){
-		if(devices!=null && devices.size()>0){
-			this.deviceDao.insertInTx(devices) ;
+
+	public void saveOrUpdateDevices(List<Device> devices) {
+		if (devices != null && devices.size() > 0) {
+			this.deviceDao.insertInTx(devices);
 		}
-		
+
 	}
 }

@@ -64,7 +64,7 @@ public class RemoteService extends Service {
 		// 连接服务器
 		connectServer();
 		// 注册广播
-		if(alarmReceiver == null){
+		if (alarmReceiver == null) {
 			alarmReceiver = new AlarmReceiver();
 		}
 		// 註冊廣播
@@ -74,7 +74,7 @@ public class RemoteService extends Service {
 		// 连接action
 		filter.addAction(AlarmReceiver.CONNECT_ACTION);
 		// 切换网络action
-		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);		
+		filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		registerReceiver(alarmReceiver, filter);
 	}
 
@@ -97,22 +97,25 @@ public class RemoteService extends Service {
 
 	@Override
 	public void onDestroy() {
+		Log.i(getClass().getName(), "onDestroy");
 		if (applicationContextClient != null) {
+			// 下线所有设备 并且设置数据库下线状态
+			applicationContextClient.offlineAllDevices();
 			applicationContextClient.destory();
 			applicationContextClient = null;
 		}
-		if(mServerStatusListener!=null){
+		if (mServerStatusListener != null) {
 			mServerStatusListener.destory();
 			mServerStatusListener = null;
 		}
-		mNettyProcessorHandler = null;			
+		mNettyProcessorHandler = null;
 		daoSession.clear();
 		daoMaster = null;
 		if (thread != null) {
 			thread.interrupt();
 			thread = null;
 		}
-		if(alarmReceiver!=null){
+		if (alarmReceiver != null) {
 			// 解除广播
 			unregisterReceiver(alarmReceiver);
 		}

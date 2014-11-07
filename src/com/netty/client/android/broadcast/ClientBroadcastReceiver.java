@@ -21,9 +21,9 @@ import com.xwtec.protoc.CommandProtoc;
  */
 public class ClientBroadcastReceiver extends BroadcastReceiver {
 	// 消息通知
-	public static final String NOTIFICATION_ACTION = "com.xwtec.netty.NOTIFICATION";
+	public static final String NOTIFICATION_ACTION = "com.netty.NOTIFICATION";
 	// 注册成功广播通知
-	public static final String REG_ACTION = "com.xwtec.netty.REG";
+	public static final String REG_ACTION = "com.netty.REG";
 
 	@Override
 	public void onReceive(Context context, Intent intent) {

@@ -88,7 +88,7 @@ public class PushMessageHandler extends SimpleChannelInboundHandler<CommandProto
 							Device device = applicationContextClient.getDeviceInfoByAppPackage(appPackage);
 							if (device != null) {
 								device.setIsOnline(ApplicationContextClient.DEVICE_ONLINE);
-								applicationContextClient.saveOrUpdateDevice(device);
+								//applicationContextClient.saveOrUpdateDevice(device);
 							}
 						}
 						break;
@@ -101,8 +101,11 @@ public class PushMessageHandler extends SimpleChannelInboundHandler<CommandProto
 							// 更新设备信息
 							Device device = applicationContextClient.getDeviceInfoByAppPackage(appPackage);
 							if (device != null) {
-								device.setIsOnline(ApplicationContextClient.DEVICE_OFFLINE);
-								applicationContextClient.saveOrUpdateDevice(device);
+								// 删除设备信息 不会发送消息了 （客户端中设备 在线状态与服务端设备状态时不一样的：客户端设备下线标识需要向发送登陆消息 ，上线成功后不需要重复发送登陆请求，而不需要发送消息的时候需要将客户端service数据缓存清除
+								// ，服务端设备上下线仅更新状态内容，不会删除信息）
+								applicationContextClient.deleteDeviceInfo(device);
+								// device.setIsOnline(ApplicationContextClient.DEVICE_OFFLINE);
+								// applicationContextClient.saveOrUpdateDevice(device);
 							}
 						}
 						break;
@@ -165,4 +168,18 @@ public class PushMessageHandler extends SimpleChannelInboundHandler<CommandProto
 		applicationContextClient.offlineAllDevices();
 		ctx.close();
 	}
+
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		Log.i(getClass().getName(), "channelInactive");
+		/**
+		 * 异常关闭连接启动重连操作
+		 */
+		// 首先更新连接状态
+		mConnectionManager.setConnectState(NettyServerManager.CONNECT_CLOSED);
+		// 更新设备状态 信息为离线
+		applicationContextClient.offlineAllDevices();
+		ctx.close();
+	}
+
 }

@@ -22,6 +22,7 @@ import com.netty.client.android.aidl.NettyServiceClient.Stub;
  */
 public class NettyConnectionClient {
 
+	private NettyServiceClient nettyServiceClient = null;
 	private Context mContext;
 	private String mAppKey;
 
@@ -48,7 +49,7 @@ public class NettyConnectionClient {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			Log.i("NettyConnectionClient", "### aidl onServiceConnected. service : " + service.getClass().getName());
 
-			NettyServiceClient nettyServiceClient = Stub.asInterface(service);
+			nettyServiceClient = Stub.asInterface(service);
 			Log.i("NettyConnectionClient", "### after asInterface : " + nettyServiceClient.getClass().getName());
 			try {
 				nettyServiceClient.regist(mAppKey, mContext.getPackageName());
@@ -72,4 +73,22 @@ public class NettyConnectionClient {
 	public void unbindNettyService() {
 		mContext.unbindService(mConnection);
 	}
+
+	/**
+	 * 解除设备注册 （删除service中缓存的设备信息内容）
+	 * 
+	 * @param context
+	 */
+	public void unregist() {
+		if (nettyServiceClient != null && mContext != null) {
+			try {
+				// 想service发送 设备下线消息
+				nettyServiceClient.deviceOffline(mContext.getPackageName());
+
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 }
